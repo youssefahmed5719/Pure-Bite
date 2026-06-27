@@ -142,25 +142,25 @@
             <p style="color: var(--text-muted); margin-bottom: 20px;">Total Amount: <strong id="modal-total-amount" style="color:var(--primary);">0 EGP</strong></p>
             
             <div class="customer-form">
-                <input type="text" id="cust-name" class="form-input" placeholder="Full Name (الاسم)" required>
-                <input type="tel" id="cust-phone" class="form-input" placeholder="Phone Number (رقم الموبايل)" required>
+                <input type="text" id="cust-name" class="form-input" placeholder="Full Name " required>
+                <input type="tel" id="cust-phone" class="form-input" placeholder="Phone Number " required>
                 
                 <div class="order-type-group">
-                    <label><input type="radio" name="orderType" value="Dine-in" checked onchange="toggleAddress()"> 🍽️ Dine-in (في المكان)</label>
-                    <label><input type="radio" name="orderType" value="Delivery" onchange="toggleAddress()"> 🛵 Delivery (دليفري)</label>
+                    <label><input type="radio" name="orderType" value="Dine-in" checked onchange="toggleAddress()">  Dine-in </label>
+                    <label><input type="radio" name="orderType" value="Delivery" onchange="toggleAddress()">  Delivery </label>
                 </div>
-                <textarea id="cust-address" class="form-input" placeholder="Delivery Address (عنوان التوصيل بالتفصيل)" style="display: none; resize: vertical; min-height: 80px;"></textarea>
+                <textarea id="cust-address" class="form-input" placeholder="Delivery Address " style="display: none; resize: vertical; min-height: 80px;"></textarea>
             </div>
 
             <div class="payment-options">
                 <label class="pay-option selected" id="opt-visa" onclick="selectPayment('visa')">
-                    <span style="font-size: 1.5rem; margin-right: 15px;">💳</span> Credit / Debit Card <input type="radio" name="payment" value="Credit Card" checked>
+                    <span style="font-size: 1.5rem; margin-right: 15px;"></span> Credit / Debit Card <input type="radio" name="payment" value="Credit Card" checked>
                 </label>
                 <label class="pay-option" id="opt-apple" onclick="selectPayment('apple')">
-                    <span style="font-size: 1.5rem; margin-right: 15px;">🍏</span> Apple Pay <input type="radio" name="payment" value="Apple Pay">
+                    <span style="font-size: 1.5rem; margin-right: 15px;"></span> Apple Pay <input type="radio" name="payment" value="Apple Pay">
                 </label>
                 <label class="pay-option" id="opt-cash" onclick="selectPayment('cash')">
-                    <span style="font-size: 1.5rem; margin-right: 15px;">💵</span> Cash on Delivery <input type="radio" name="payment" value="Cash">
+                    <span style="font-size: 1.5rem; margin-right: 15px;"></span> Cash on Delivery <input type="radio" name="payment" value="Cash">
                 </label>
             </div>
             <button class="btn-confirm-pay" id="confirm-btn" onclick="processPayment()">Confirm Payment ✅</button>
