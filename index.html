@@ -74,6 +74,31 @@
         .order-type-group label { cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .order-type-group input { accent-color: var(--primary); }
         @media (max-width: 992px) { .cart-section { position: relative; top: 0; flex: 1 1 100%; } }
+        /* =========================================
+           📱 تنسيقات مخصصة لشاشات الموبايل
+           ========================================= */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 15px; }
+            .logo { font-size: 1.4rem; }
+            .nav-tagline { font-size: 0.75rem; }
+            
+            .category-nav { padding: 12px 15px; gap: 10px; }
+            .cat-btn { padding: 8px 14px; font-size: 0.85rem; }
+            
+            .main-container { padding: 15px; gap: 20px; }
+            
+            /* خلي الكروت تظهر واحدة بواحدة تحت بعض عشان تاخد راحتها */
+            .menu-section { grid-template-columns: 1fr; }
+            .card { padding: 15px; }
+            .dish-name { font-size: 1.15rem; }
+            
+            .cart-section { padding: 15px; border: 1px solid #E8F5E9; box-shadow: none; }
+            
+            /* تظبيط نافذة الدفع للموبايل */
+            .modal-content { padding: 20px; width: 95%; }
+            .order-type-group { flex-direction: column; gap: 10px; } /* زراير الدليفري تحت بعض */
+            .pay-option { padding: 10px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
