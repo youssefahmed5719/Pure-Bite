@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pure Bite | Restaurant Order System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap');
+        body { background-color: #f0f2f5; color: #2c3e50; font-family: 'Nunito', sans-serif; margin: 0; padding: 0; }
+        .header { background-color: #fff; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 3px solid #2E7D32; }
+        .header h1 { margin: 0; color: #2E7D32; font-size: 1.8rem; font-weight: 900; }
+        .clock { font-size: 1.2rem; font-weight: bold; color: #7F8C8D; background: #f9f9f9; padding: 8px 15px; border-radius: 8px; }
+        .dashboard-container { padding: 40px; max-width: 1400px; margin: 0 auto; }
+        .section-title { font-size: 1.5rem; margin-bottom: 20px; color: #34495e; border-left: 5px solid #2E7D32; padding-left: 10px;}
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+        .ticket { background-color: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.06); display: flex; flex-direction: column; border-top: 5px solid #FF9800; animation: slideIn 0.5s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .ticket-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .ticket-id { font-size: 1.3rem; font-weight: 900; color: #2c3e50; }
+        .ticket-time { font-size: 0.9rem; color: #7F8C8D; font-weight: 600; }
+        .customer-info-box { background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
+        .customer-row { display: flex; margin-bottom: 5px; font-size: 0.95rem; }
+        .customer-label { font-weight: 800; color: #7F8C8D; width: 80px; flex-shrink: 0; }
+        .customer-data { font-weight: 600; color: #34495e; }
+        .order-type-badge { background: #FFECB3; color: #F57F17; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; margin-left: 10px; }
+        .order-type-badge.delivery { background: #E1F5FE; color: #0288D1; }
+        .payment-badge { background: #E8F5E9; color: #2E7D32; font-size: 0.8rem; font-weight: 800; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 15px; text-transform: uppercase; align-self: flex-start; }
+        .ticket-items { flex-grow: 1; margin-bottom: 20px; }
+        .item-row { margin-bottom: 12px; font-size: 1.05rem; font-weight: 600; color: #34495e; }
+        .item-addons { font-size: 0.85rem; color: #7F8C8D; padding-left: 20px; margin-top: 4px; font-weight: 400; }
+        .ticket-footer { border-top: 2px dashed #eee; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .ticket-total { font-size: 1.2rem; font-weight: 900; color: #E64A19; }
+        .btn-accept { background-color: #2E7D32; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-accept:hover { background-color: #1B5E20; box-shadow: 0 4px 10px rgba(46,125,50,0.3); }
+        .no-orders { text-align: center; font-size: 1.5rem; color: #95a5a6; width: 100%; grid-column: 1 / -1; margin-top: 80px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🖥️ Pure Bite | Live Dashboard (Online)</h1>
+        <div class="clock" id="clock">00:00:00</div>
+    </div>
+
+    <div class="dashboard-container">
+        <h2 class="section-title">Incoming Orders 🟢 Live</h2>
+        <div class="orders-grid" id="system-container">
+            <div class="no-orders">Connecting to Server... 🔄</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCP41US60Vu14s1WB_kDubWS4GyC8nWwoc",
+            authDomain: "pure-bite-10c08.firebaseapp.com",
+            databaseURL: "https://pure-bite-10c08-default-rtdb.firebaseio.com",
+            projectId: "pure-bite-10c08",
+            storageBucket: "pure-bite-10c08.firebasestorage.app",
+            messagingSenderId: "918481070076",
+            appId: "1:918481070076:web:1de15defa968b917f53479"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const ordersRef = ref(db, 'live_orders');
+
+        // الساعة
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+        // وظيفة قبول الأوردر (بتمسحه من قاعدة البيانات)
+        window.acceptOrder = function(orderKey) {
+            const orderToRemove = ref(db, 'live_orders/' + orderKey);
+            remove(orderToRemove).then(() => {
+                console.log("Order Accepted and Removed!");
+            }).catch((error) => {
+                alert("Error accepting order: " + error);
+            });
+        };
+
+        // استماع فوري لأي أوردر جديد بيوصل من غير أي Refresh
+        onValue(ordersRef, (snapshot) => {
+            const container = document.getElementById('system-container');
+            container.innerHTML = ''; 
+            const data = snapshot.val();
+            
+            if (!data) {
+                container.innerHTML = '<div class="no-orders">Waiting for new orders... 🍽️</div>';
+                return;
+            }
+
+            // عرض الأوردرات
+            Object.entries(data).forEach(([key, order]) => {
+                let itemsHTML = '';
+                let orderItems = order.order_details || [];
+                
+                orderItems.forEach(item => {
+                    let addonsStr = item.add_ons;
+                    let addons = (addonsStr && addonsStr !== 'None') ? `<div class="item-addons">+ ${addonsStr}</div>` : '';
+                    itemsHTML += `
+                        <div class="item-row">
+                            <span style="color:#2E7D32; font-weight:900;">1x</span> ${item.item_name}
+                            ${addons}
+                        </div>
+                    `;
+                });
+
+                let custInfo = order.customer_info || {};
+                let orderType = custInfo.order_type || 'N/A';
+                let typeBadgeClass = orderType === 'Delivery' ? 'delivery' : '';
+                
+                let addressRow = orderType === 'Delivery' ? `
+                    <div class="customer-row">
+                        <div class="customer-label">Address:</div>
+                        <div class="customer-data">${custInfo.delivery_address}</div>
+                    </div>` : '';
+
+                const ticket = `
+                    <div class="ticket">
+                        <div class="ticket-header">
+                            <span class="ticket-id">${order.order_id} <span class="order-type-badge ${typeBadgeClass}">${orderType}</span></span>
+                            <span class="ticket-time">⏱️ ${order.date_time}</span>
+                        </div>
+                        
+                        <div class="customer-info-box">
+                            <div class="customer-row">
+                                <div class="customer-label">Name:</div>
+                                <div class="customer-data">${custInfo.name}</div>
+                            </div>
+                            <div class="customer-row">
+                                <div class="customer-label">Phone:</div>
+                                <div class="customer-data">${custInfo.phone}</div>
+                            </div>
+                            ${addressRow}
+                        </div>
+
+                        <div class="payment-badge">💳 Paid via: ${order.payment_method}</div>
+                        
+                        <div class="ticket-items">
+                            ${itemsHTML}
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <span class="ticket-total">${order.total_amount} EGP</span>
+                            <button class="btn-accept" onclick="acceptOrder('${key}')">Accept Order</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += ticket;
+            });
+        });
+    </script>
+</body>
+</html>
