@@ -132,13 +132,13 @@
                 <span class="grand-total-label">Total Amount:</span>
                 <span class="grand-total-value"><span id="grand-total">0</span> EGP</span>
             </div>
-            <button class="btn-checkout" onclick="openPaymentModal()">💳 Checkout & Pay</button>
+            <button class="btn-checkout" onclick="openPaymentModal()">Checkout & Pay</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-content">
-            <h2 class="modal-title">Secure Checkout 🔒</h2>
+            <h2 class="modal-title">Secure Checkout </h2>
             <p style="color: var(--text-muted); margin-bottom: 20px;">Total Amount: <strong id="modal-total-amount" style="color:var(--primary);">0 EGP</strong></p>
             
             <div class="customer-form">
@@ -163,7 +163,7 @@
                     <span style="font-size: 1.5rem; margin-right: 15px;"></span> Cash on Delivery <input type="radio" name="payment" value="Cash">
                 </label>
             </div>
-            <button class="btn-confirm-pay" id="confirm-btn" onclick="processPayment()">Confirm Payment ✅</button>
+            <button class="btn-confirm-pay" id="confirm-btn" onclick="processPayment()">Confirm Payment </button>
             <button style="background: none; border: none; color: var(--text-muted); margin-top: 15px; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
@@ -383,7 +383,7 @@
           const ordersRef = ref(db, 'live_orders');
           const newOrderRef = push(ordersRef);
           set(newOrderRef, newOrder).then(() => {
-              alert(`Order Confirmed! 🎉\n\nName: ${newOrder.customer_info.name}\nOrder ID: ${newOrder.order_id}\nType: ${newOrder.customer_info.order_type}\n\nThe page will now refresh.`);
+              alert(`Order Confirmed! \n\nName: ${newOrder.customer_info.name}\nOrder ID: ${newOrder.order_id}\nType: ${newOrder.customer_info.order_type}\n\nThe page will now refresh.`);
               window.location.reload();
           }).catch((error) => {
               console.error("Firebase Error:", error);
