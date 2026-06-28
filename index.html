@@ -320,17 +320,22 @@
             renderCart();
         }
 
-        // --- عرض الكارت ---
-        function renderCart() {
+     function renderCart() {
             const container = document.getElementById('cart-container');
-            const emptyMsg = document.getElementById('empty-msg');
             const grandTotalEl = document.getElementById('grand-total');
-            // تحديث رقم الكارت بناءً على مجموع الكميات
+            // تحديث رقم الكارت (العداد اللي فوق)
             document.getElementById('cart-count').innerText = cartOrder.reduce((sum, item) => sum + item.quantity, 0);
-            container.innerHTML = ''; let grandTotal = 0;
+            
+            let grandTotal = 0;
 
-            if (cartOrder.length === 0) { container.appendChild(emptyMsg); emptyMsg.style.display = 'block'; grandTotalEl.innerText = '0'; return; }
+            // لو الكارت بقى فاضي (شيلنا كل حاجة)
+            if (cartOrder.length === 0) { 
+                container.innerHTML = '<div class="empty-cart" id="empty-msg">Your cart is empty. Start building your healthy meal!</div>';
+                grandTotalEl.innerText = '0.00'; 
+                return; 
+            }
 
+            container.innerHTML = ''; 
             cartOrder.forEach((item, index) => {
                 grandTotal += (item.price * item.quantity);
                 let addonsHTML = item.addons ? `<p class="cart-item-sides">Add-ons: ${item.addons}</p>` : '';
